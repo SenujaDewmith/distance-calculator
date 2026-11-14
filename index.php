@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+session_start();
+
 require_once __DIR__ . '/includes/distance.php';
 require_once __DIR__ . '/includes/database.php';
 
@@ -58,6 +60,23 @@ $longitudeAInput = getPostedValue('longitude_a');
 $latitudeBInput = getPostedValue('latitude_b');
 $longitudeBInput = getPostedValue('longitude_b');
 
+
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET'
+    && isset($_SESSION['calculationResult'])
+) {
+    $result = $_SESSION['calculationResult'];
+
+    unset($_SESSION['calculationResult']);
+
+    $latitudeAInput = $result['latitudeA'];
+    $longitudeAInput = $result['longitudeA'];
+    $latitudeBInput = $result['latitudeB'];
+    $longitudeBInput = $result['longitudeB'];
+    $distanceKm = $result['distanceKm'];
+}
+
+
 // Process the form only after submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -95,6 +114,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $longitudeB,
             $distanceKm
         );
+
+
+    $_SESSION['calculationResult'] = [
+        'latitudeA' => $latitudeAInput,
+        'longitudeA' => $longitudeAInput,
+        'latitudeB' => $latitudeBInput,
+        'longitudeB' => $longitudeBInput,
+        'distanceKm' => $distanceKm
+    ];
+
+    header('Location: index.php', true, 303);
+    exit;
+
 
 
     } catch (InvalidArgumentException $exception) {
