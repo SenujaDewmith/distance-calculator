@@ -1,0 +1,17 @@
+# Environment configuration
+.env
+.env.*
+!.env.example
+
+# Local database credentials
+database.local.php
+includes/database.local.php
+
+# Dependencies
+/vendor/
+
+# Editor configuration
+.vscode/
+
+# Logs
+*.log
