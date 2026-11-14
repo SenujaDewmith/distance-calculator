@@ -1,4 +1,24 @@
 
+/* =========================================
+   Geographic Distance Calculator
+   Corporate-Inspired Colour Theme
+   ========================================= */
+
+:root {
+    --primary-color: #252B73;
+    --primary-hover: #191F57;
+    --accent-gold: #D4A43B;
+    --background-color: #F7F8FC;
+    --card-background: #FFFFFF;
+    --result-background: #F1F3FA;
+    --text-color: #243247;
+    --muted-text: #64748B;
+    --border-color: #DCE1EB;
+    --error-color: #B91C1C;
+}
+
+/* General Styles */
+
 * {
     box-sizing: border-box;
 }
@@ -7,30 +27,38 @@ body {
     margin: 0;
     padding: 30px 15px;
     font-family: Arial, sans-serif;
-    background-color: #f4f6f9;
-    color: #243247;
+    background-color: var(--background-color);
+    color: var(--text-color);
 }
+
+/* Main Calculator Container */
 
 .calculator-container {
     max-width: 760px;
     margin: 40px auto;
     padding: 30px;
-    background-color: #ffffff;
+    background-color: var(--card-background);
+    border-top: 5px solid var(--accent-gold);
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
+
+/* Headings and Description */
 
 h1 {
     margin-top: 0;
     text-align: center;
     font-size: 26px;
+    color: var(--primary-color);
 }
 
 .description {
     text-align: center;
-    color: #64748b;
+    color: var(--muted-text);
     margin-bottom: 30px;
 }
+
+/* Location Input Layout */
 
 .locations-grid {
     display: grid;
@@ -41,14 +69,17 @@ h1 {
 .location-card {
     min-width: 0;
     padding: 20px;
-    border: 1px solid #dce3ed;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
 }
 
 .location-card legend {
     font-weight: bold;
     padding: 0 8px;
+    color: var(--primary-color);
 }
+
+/* Input Fields */
 
 label {
     display: block;
@@ -59,22 +90,24 @@ label {
 input {
     width: 100%;
     padding: 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid #CBD5E1;
     border-radius: 6px;
     font-size: 15px;
 }
 
 input:focus {
-    outline: 2px solid #2563eb;
+    outline: 2px solid var(--accent-gold);
     outline-offset: 1px;
 }
+
+/* Calculate Button */
 
 button {
     width: 100%;
     margin-top: 25px;
     padding: 14px;
-    background-color: #2563eb;
-    color: white;
+    background-color: var(--primary-color);
+    color: #FFFFFF;
     border: none;
     border-radius: 6px;
     font-size: 16px;
@@ -83,13 +116,21 @@ button {
 }
 
 button:hover {
-    background-color: #1d4ed8;
+    background-color: var(--primary-hover);
 }
+
+button:focus-visible {
+    outline: 3px solid var(--accent-gold);
+    outline-offset: 3px;
+}
+
+/* Result Section */
 
 .result {
     margin-top: 25px;
     padding: 20px;
-    background-color: #f1f5f9;
+    background-color: var(--result-background);
+    border-left: 4px solid var(--accent-gold);
     border-radius: 8px;
     text-align: center;
 }
@@ -97,11 +138,25 @@ button:hover {
 .result h2 {
     margin-top: 0;
     font-size: 18px;
+    color: var(--primary-color);
 }
 
 .result p {
-    color: #64748b;
+    color: var(--muted-text);
 }
+
+.result .distance-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.result .error-message {
+    font-weight: 600;
+    color: var(--error-color);
+}
+
+/* Responsive Design */
 
 @media (max-width: 600px) {
     .calculator-container {
@@ -112,15 +167,4 @@ button:hover {
     .locations-grid {
         grid-template-columns: 1fr;
     }
-}
-
-.result .distance-value {
-    font-size: 28px;
-    font-weight: bold;
-    color: #166534;
-}
-
-.result .error-message {
-    font-weight: 600;
-    color: #b91c1c;
 }
