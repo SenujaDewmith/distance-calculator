@@ -1,3 +1,95 @@
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/includes/distance.php';
+
+$distanceKm = null;
+$errorMessage = '';
+
+// Read a submitted form value safely
+function getPostedValue(string $fieldName): string
+{
+    $value = $_POST[$fieldName] ?? '';
+
+    return is_string($value) ? trim($value) : '';
+}
+
+// Validate a numeric coordinate and its allowed range
+function validateCoordinate(
+    string $input,
+    string $fieldName,
+    float $minimum,
+    float $maximum
+): float {
+    if ($input === '') {
+        throw new InvalidArgumentException(
+            "$fieldName is required."
+        );
+    }
+
+    if (!is_numeric($input)) {
+        throw new InvalidArgumentException(
+            "$fieldName must be a valid number."
+        );
+    }
+
+    $coordinate = (float) $input;
+
+    if (!is_finite($coordinate)) {
+        throw new InvalidArgumentException(
+            "$fieldName must be a finite number."
+        );
+    }
+
+    if ($coordinate < $minimum || $coordinate > $maximum) {
+        throw new InvalidArgumentException(
+            "$fieldName must be between $minimum and $maximum."
+        );
+    }
+
+    return $coordinate;
+}
+
+// Keep the entered values when the form is submitted
+$latitudeAInput = getPostedValue('latitude_a');
+$longitudeAInput = getPostedValue('longitude_a');
+$latitudeBInput = getPostedValue('latitude_b');
+$longitudeBInput = getPostedValue('longitude_b');
+
+// Process the form only after submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $latitudeA = validateCoordinate(
+            $latitudeAInput, 'Location A latitude', -90.0, 90.0
+        );
+
+        $longitudeA = validateCoordinate(
+            $longitudeAInput, 'Location A longitude', -180.0, 180.0
+        );
+
+        $latitudeB = validateCoordinate(
+            $latitudeBInput, 'Location B latitude', -90.0, 90.0
+        );
+
+        $longitudeB = validateCoordinate(
+            $longitudeBInput, 'Location B longitude', -180.0, 180.0
+        );
+
+        $distanceKm = calculateDistanceKm(
+            $latitudeA,
+            $longitudeA,
+            $latitudeB,
+            $longitudeB
+        );
+
+    } catch (InvalidArgumentException $exception) {
+        $errorMessage = $exception->getMessage();
+    }
+}
+
+?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +125,7 @@
                         step="any"
                         placeholder="e.g. 6.9271"
                         required
+                        value="<?= htmlspecialchars($latitudeAInput, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
                     <label for="longitude-a">Longitude</label>
@@ -45,6 +138,7 @@
                         step="any"
                         placeholder="e.g. 79.8612"
                         required
+                        value="<?= htmlspecialchars($longitudeAInput, ENT_QUOTES, 'UTF-8') ?>"
                     >
                 </fieldset>
 
@@ -61,6 +155,7 @@
                         step="any"
                         placeholder="e.g. 7.2906"
                         required
+                        value="<?= htmlspecialchars($latitudeBInput, ENT_QUOTES, 'UTF-8') ?>
                     >
 
                     <label for="longitude-b">Longitude</label>
@@ -73,6 +168,7 @@
                         step="any"
                         placeholder="e.g. 80.6337"
                         required
+                        value="<?= htmlspecialchars($longitudeBInput, ENT_QUOTES, 'UTF-8') ?>"
                     >
                 </fieldset>
 
