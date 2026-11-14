@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/distance.php';
+require_once __DIR__ . '/includes/database.php';
 
 $distanceKm = null;
 $errorMessage = '';
@@ -83,8 +84,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $longitudeB
         );
 
+        
+        $pdo = getDatabaseConnection();
+
+        saveDistanceCalculation(
+            $pdo,
+            $latitudeA,
+            $longitudeA,
+            $latitudeB,
+            $longitudeB,
+            $distanceKm
+        );
+
+
     } catch (InvalidArgumentException $exception) {
         $errorMessage = $exception->getMessage();
+    } catch (PDOException $exception) {
+        error_log($exception->getMessage());
+
+        $distanceKm = null;
+
+        $errorMessage = "Unable to save the calculation. Please try again.";
     }
 }
 
