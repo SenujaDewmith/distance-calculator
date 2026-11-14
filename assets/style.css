@@ -1,0 +1,115 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px 15px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #243247;
+}
+
+.calculator-container {
+    max-width: 760px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    margin-top: 0;
+    text-align: center;
+    font-size: 26px;
+}
+
+.description {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+.locations-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.location-card {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid #dce3ed;
+    border-radius: 8px;
+}
+
+.location-card legend {
+    font-weight: bold;
+    padding: 0 8px;
+}
+
+label {
+    display: block;
+    margin: 15px 0 6px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+input:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: 1px;
+}
+
+button {
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1d4ed8;
+}
+
+.result {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.result h2 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.result p {
+    color: #64748b;
+}
+
+@media (max-width: 600px) {
+    .calculator-container {
+        margin: 10px auto;
+        padding: 20px;
+    }
+
+    .locations-grid {
+        grid-template-columns: 1fr;
+    }
+}
