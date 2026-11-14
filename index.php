@@ -155,8 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         step="any"
                         placeholder="e.g. 7.2906"
                         required
-                        value="<?= htmlspecialchars($latitudeBInput, ENT_QUOTES, 'UTF-8') ?>
-                    >
+                        value="<?= htmlspecialchars($latitudeBInput, ENT_QUOTES, 'UTF-8') ?>"
+                >
 
                     <label for="longitude-b">Longitude</label>
                     <input
@@ -178,10 +178,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </form>
 
-        <section class="result" aria-live="polite">
-            <h2>Calculated Distance</h2>
+        
+    <section class="result" aria-live="polite">
+        <h2>Calculated Distance</h2>
+
+        <?php if ($errorMessage !== ''): ?>
+
+            <p class="error-message" role="alert">
+            <?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?>
+            </p>
+
+        <?php elseif ($distanceKm !== null): ?>
+
+            <p class="distance-value">
+            <?= number_format($distanceKm, 2) ?> km
+            </p>
+
+        <?php else: ?>
+
             <p>The distance will appear here.</p>
-        </section>
+
+        <?php endif; ?>
+    </section>
+
 
     </main>
 
