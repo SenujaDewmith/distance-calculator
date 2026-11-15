@@ -176,6 +176,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geographic Distance Calculator</title>
     <link rel="stylesheet" href="assets/style.css">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+
 </head>
 <body>
 
