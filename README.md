@@ -83,9 +83,8 @@ C:\xampp\htdocs\distance-calculator\
 
 ### 3. Import the database
 
-1. Start **MySQL Server 8.4**.
-2. Open **MySQL Workbench** and connect to your local MySQL server.
-3. Open `database/distance_calculator.sql` in Workbench.
+1. Start *.
+3. Open `database/setup.sql` in Workbench.
 4. Execute the script to create the required database objects.
 
 **Note:** A SQL export may also contain saved calculation records. Check the SQL file if you need to submit a database without sample data.
@@ -101,7 +100,8 @@ The project includes `config/database.example.php` as a sample configuration fil
    ```
 
 2. Edit the copied file and enter your local MySQL host, port, database name, username and password.
-3. Keep this real configuration file **outside the project folder**. The PHP database connection code should load the private file from this location.
+3. Keep this real configuration file **MySQL Server 8.4**.
+2. Open **MySQL Workbench** and connect to your local MySQL server*outside the project folder**. The PHP database connection code should load the private file from this location.
 
 Example of the configuration values (the format must match what your `includes/database.php` expects):
 
