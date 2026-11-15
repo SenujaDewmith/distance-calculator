@@ -8,9 +8,11 @@ require_once __DIR__ . '/includes/distance.php';
 require_once __DIR__ . '/includes/database.php';
 
 $distanceKm = null;
+$calculationResult = null;
 $errorMessage = '';
+$errorField = '';
 
-// Read a submitted form value safely
+// Get user input safely
 function getPostedValue(string $fieldName): string
 {
     $value = $_POST[$fieldName] ?? '';
@@ -18,7 +20,7 @@ function getPostedValue(string $fieldName): string
     return is_string($value) ? trim($value) : '';
 }
 
-// Validate a numeric coordinate and its allowed range
+// Validate coordinate values
 function validateCoordinate(
     string $input,
     string $fieldName,
@@ -31,7 +33,7 @@ function validateCoordinate(
         );
     }
 
-    if (!is_numeric($input)) {
+   if (!is_numeric($input)) {
         throw new InvalidArgumentException(
             "$fieldName must be a valid number."
         );
@@ -54,48 +56,65 @@ function validateCoordinate(
     return $coordinate;
 }
 
-// Keep the entered values when the form is submitted
+// Read submitted values
 $latitudeAInput = getPostedValue('latitude_a');
 $longitudeAInput = getPostedValue('longitude_a');
 $latitudeBInput = getPostedValue('latitude_b');
 $longitudeBInput = getPostedValue('longitude_b');
 
-
+// Retrieve successful result after PRG redirect
 if (
     $_SERVER['REQUEST_METHOD'] === 'GET'
     && isset($_SESSION['calculationResult'])
 ) {
-    $result = $_SESSION['calculationResult'];
+    $calculationResult = $_SESSION['calculationResult'];
 
     unset($_SESSION['calculationResult']);
-
-    $latitudeAInput = $result['latitudeA'];
-    $longitudeAInput = $result['longitudeA'];
-    $latitudeBInput = $result['latitudeB'];
-    $longitudeBInput = $result['longitudeB'];
-    $distanceKm = $result['distanceKm'];
 }
 
 
-// Process the form only after submission
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        $errorField = 'latitude-a';
+
         $latitudeA = validateCoordinate(
-            $latitudeAInput, 'Location A latitude', -90.0, 90.0
+            $latitudeAInput,
+            'Location A latitude',
+            -90.0,
+            90.0
         );
+
+        $errorField = 'longitude-a';
 
         $longitudeA = validateCoordinate(
-            $longitudeAInput, 'Location A longitude', -180.0, 180.0
+            $longitudeAInput,
+            'Location A longitude',
+            -180.0,
+            180.0
         );
+
+        $errorField = 'latitude-b';
 
         $latitudeB = validateCoordinate(
-            $latitudeBInput, 'Location B latitude', -90.0, 90.0
+            $latitudeBInput,
+            'Location B latitude',
+            -90.0,
+            90.0
         );
+
+        $errorField = 'longitude-b';
 
         $longitudeB = validateCoordinate(
-            $longitudeBInput, 'Location B longitude', -180.0, 180.0
+            $longitudeBInput,
+            'Location B longitude',
+            -180.0,
+            180.0
         );
 
+        $errorField = '';
+
+        // Calculate distance
         $distanceKm = calculateDistanceKm(
             $latitudeA,
             $longitudeA,
@@ -103,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $longitudeB
         );
 
-        
+        // Save calculation to MySQL
         $pdo = getDatabaseConnection();
 
         saveDistanceCalculation(
@@ -115,33 +134,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $distanceKm
         );
 
+        // Store result data for the redirected GET page
+        $_SESSION['calculationResult'] = [
+            'latitudeA' => $latitudeAInput,
+            'longitudeA' => $longitudeAInput,
+            'latitudeB' => $latitudeBInput,
+            'longitudeB' => $longitudeBInput,
+            'distanceKm' => $distanceKm
+        ];
 
-    $_SESSION['calculationResult'] = [
-        'latitudeA' => $latitudeAInput,
-        'longitudeA' => $longitudeAInput,
-        'latitudeB' => $latitudeBInput,
-        'longitudeB' => $longitudeBInput,
-        'distanceKm' => $distanceKm
-    ];
-
-    header('Location: index.php', true, 303);
-    exit;
-
-
+        // Redirect only after successful database saving
+        header('Location: index.php', true, 303);
+        exit;
 
     } catch (InvalidArgumentException $exception) {
         $errorMessage = $exception->getMessage();
+
     } catch (PDOException $exception) {
         error_log($exception->getMessage());
 
         $distanceKm = null;
+        $errorField = 'calculate-button';
+        $errorMessage = 'Unable to save the calculation. Please try again.';
 
-        $errorMessage = "Unable to save the calculation. Please try again.";
+    } catch (Throwable $exception) {
+        error_log($exception->getMessage());
+
+        $distanceKm = null;
+        $errorField = 'calculate-button';
+        $errorMessage = 'An unexpected error occurred. Please try again.';
     }
 }
 
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -160,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             Calculate the distance between two geographic locations.
         </p>
 
-        <form method="POST" action="">
+        <form method="POST" action="" novalidate autocomplete="off">
 
             <div class="locations-grid">
 
@@ -169,28 +195,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <label for="latitude-a">Latitude</label>
                     <input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
                         id="latitude-a"
                         name="latitude_a"
-                        min="-90"
-                        max="90"
-                        step="any"
                         placeholder="e.g. 6.9271"
-                        required
                         value="<?= htmlspecialchars($latitudeAInput, ENT_QUOTES, 'UTF-8') ?>"
+                        aria-invalid="<?= $errorField === 'latitude-a' ? 'true' : 'false' ?>"
+                        <?= $errorField === 'latitude-a' ? 'autofocus aria-describedby="form-error"' : '' ?>
                     >
 
                     <label for="longitude-a">Longitude</label>
                     <input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
                         id="longitude-a"
                         name="longitude_a"
-                        min="-180"
-                        max="180"
-                        step="any"
                         placeholder="e.g. 79.8612"
-                        required
                         value="<?= htmlspecialchars($longitudeAInput, ENT_QUOTES, 'UTF-8') ?>"
+                        aria-invalid="<?= $errorField === 'longitude-a' ? 'true' : 'false' ?>"
+                        <?= $errorField === 'longitude-a' ? 'autofocus aria-describedby="form-error"' : '' ?>
                     >
                 </fieldset>
 
@@ -199,60 +223,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <label for="latitude-b">Latitude</label>
                     <input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
                         id="latitude-b"
                         name="latitude_b"
-                        min="-90"
-                        max="90"
-                        step="any"
                         placeholder="e.g. 7.2906"
-                        required
                         value="<?= htmlspecialchars($latitudeBInput, ENT_QUOTES, 'UTF-8') ?>"
-                >
+                        aria-invalid="<?= $errorField === 'latitude-b' ? 'true' : 'false' ?>"
+                        <?= $errorField === 'latitude-b' ? 'autofocus aria-describedby="form-error"' : '' ?>
+                    >
 
                     <label for="longitude-b">Longitude</label>
                     <input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
                         id="longitude-b"
                         name="longitude_b"
-                        min="-180"
-                        max="180"
-                        step="any"
                         placeholder="e.g. 80.6337"
-                        required
                         value="<?= htmlspecialchars($longitudeBInput, ENT_QUOTES, 'UTF-8') ?>"
+                        aria-invalid="<?= $errorField === 'longitude-b' ? 'true' : 'false' ?>"
+                        <?= $errorField === 'longitude-b' ? 'autofocus aria-describedby="form-error"' : '' ?>
                     >
                 </fieldset>
 
             </div>
 
-            <button type="submit">Calculate Distance</button>
+            <button
+                type="submit"
+                id="calculate-button"
+                <?= $errorField === 'calculate-button' ? 'autofocus' : '' ?>
+            >
+                Calculate Distance
+            </button>
 
         </form>
 
-        
-    <section class="result" aria-live="polite">
-        <h2>Calculated Distance</h2>
+        <section class="result" aria-live="polite">
+            <h2>Calculated Distance</h2>
 
-        <?php if ($errorMessage !== ''): ?>
+            <?php if ($errorMessage !== ''): ?>
 
-            <p class="error-message" role="alert">
-            <?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?>
-            </p>
+                <p class="error-message" id="form-error" role="alert">
+                    <?= htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') ?>
+                </p>
 
-        <?php elseif ($distanceKm !== null): ?>
+            <?php elseif ($calculationResult !== null): ?>
 
-            <p class="distance-value">
-            <?= number_format($distanceKm, 2) ?> km
-            </p>
+                <div class="result-coordinates">
 
-        <?php else: ?>
+                    <div class="result-location">
+                        <h3>Location A</h3>
+                        <p>
+                            Latitude:
+                            <?= htmlspecialchars($calculationResult['latitudeA'], ENT_QUOTES, 'UTF-8') ?>
+                        </p>
+                        <p>
+                            Longitude:
+                            <?= htmlspecialchars($calculationResult['longitudeA'], ENT_QUOTES, 'UTF-8') ?>
+                        </p>
+                    </div>
 
-            <p>The distance will appear here.</p>
+                    <div class="result-location">
+                        <h3>Location B</h3>
+                        <p>
+                            Latitude:
+                            <?= htmlspecialchars($calculationResult['latitudeB'], ENT_QUOTES, 'UTF-8') ?>
+                        </p>
+                        <p>
+                            Longitude:
+                            <?= htmlspecialchars($calculationResult['longitudeB'], ENT_QUOTES, 'UTF-8') ?>
+                        </p>
+                    </div>
 
-        <?php endif; ?>
-    </section>
+                </div>
 
+                <p class="distance-value">
+                    <?= number_format($calculationResult['distanceKm'], 2) ?> km
+                </p>
+
+            <?php else: ?>
+
+                <p>The distance will appear here.</p>
+
+            <?php endif; ?>
+        </section>
 
     </main>
 
