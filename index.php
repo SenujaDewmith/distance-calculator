@@ -191,7 +191,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="locations-grid">
 
                 <fieldset class="location-card">
-                    <legend>Location A</legend>
+                    <legend title="Enter the coordinates of the first geographic location.">
+                        Location A
+                    </legend>
 
                     <label for="latitude-a">Latitude</label>
                     <input
@@ -200,6 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="latitude-a"
                         name="latitude_a"
                         placeholder="e.g. 6.9271"
+                        title="Enter latitude between -90 and 90 degrees."
                         value="<?= htmlspecialchars($latitudeAInput, ENT_QUOTES, 'UTF-8') ?>"
                         aria-invalid="<?= $errorField === 'latitude-a' ? 'true' : 'false' ?>"
                         <?= $errorField === 'latitude-a' ? 'autofocus aria-describedby="form-error"' : '' ?>
@@ -212,6 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="longitude-a"
                         name="longitude_a"
                         placeholder="e.g. 79.8612"
+                        title="Enter longitude between -180 and 180 degrees."
                         value="<?= htmlspecialchars($longitudeAInput, ENT_QUOTES, 'UTF-8') ?>"
                         aria-invalid="<?= $errorField === 'longitude-a' ? 'true' : 'false' ?>"
                         <?= $errorField === 'longitude-a' ? 'autofocus aria-describedby="form-error"' : '' ?>
@@ -219,7 +223,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </fieldset>
 
                 <fieldset class="location-card">
-                    <legend>Location B</legend>
+                    <legend title="Enter the coordinates of the second geographic location.">
+                        Location B
+                    </legend>
 
                     <label for="latitude-b">Latitude</label>
                     <input
@@ -228,6 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="latitude-b"
                         name="latitude_b"
                         placeholder="e.g. 7.2906"
+                        title="Enter latitude between -90 and 90 degrees."
                         value="<?= htmlspecialchars($latitudeBInput, ENT_QUOTES, 'UTF-8') ?>"
                         aria-invalid="<?= $errorField === 'latitude-b' ? 'true' : 'false' ?>"
                         <?= $errorField === 'latitude-b' ? 'autofocus aria-describedby="form-error"' : '' ?>
@@ -240,6 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         id="longitude-b"
                         name="longitude_b"
                         placeholder="e.g. 80.6337"
+                        title="Enter longitude between -180 and 180 degrees."
                         value="<?= htmlspecialchars($longitudeBInput, ENT_QUOTES, 'UTF-8') ?>"
                         aria-invalid="<?= $errorField === 'longitude-b' ? 'true' : 'false' ?>"
                         <?= $errorField === 'longitude-b' ? 'autofocus aria-describedby="form-error"' : '' ?>
@@ -251,6 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button
                 type="submit"
                 id="calculate-button"
+                title="Calculate the shortest approximate distance between the two geographic locations."
                 <?= $errorField === 'calculate-button' ? 'autofocus' : '' ?>
             >
                 Calculate Distance
