@@ -301,6 +301,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?= number_format($calculationResult['distanceKm'], 2) ?> km
                 </p>
 
+
+                <!-- Calculation Explanation -->
+                <details class="calculation-explanation">
+                    <summary>How was this distance calculated?</summary>
+
+                    <div class="explanation-content">
+                        <h3>Understanding the Calculation</h3>
+
+                        <p>
+                            Earth is curved, so we use the Haversine formula
+                            to estimate the shortest distance between two
+                            locations along Earth's surface.
+                        </p>
+
+                        <ol class="calculation-steps">
+                            <li>
+                                <strong>Identify the two locations</strong>
+                                <p>
+                                    We take the latitude and longitude of
+                                    Location A and Location B.
+                                </p>
+                            </li>
+
+                            <li>
+                                <strong>Convert degrees to radians</strong>
+                                <p>
+                                    The coordinates are converted into radians,
+                                    which are used in mathematical calculations.
+                                </p>
+                            </li>
+
+                            <li>
+                                <strong>Apply the Haversine formula</strong>
+                                <p>
+                                    The formula uses the coordinates to find
+                                    the angle between the two locations
+                                    at the centre of Earth.
+                                </p>
+                            </li>
+
+                            <li>
+                                <strong>Calculate the distance</strong>
+                                <p>
+                                    We multiply the angle by Earth's
+                                    approximate radius of 6,371 km
+                                    to get the distance in kilometres.
+                                </p>
+                            </li>
+                        </ol>
+
+                        <h3>Mathematical Formula</h3>
+
+                        <div class="formula-box">
+                            <p>
+                                a = sin²(Δφ / 2) +
+                                cos(φ₁) × cos(φ₂) × sin²(Δλ / 2)
+                            </p>
+
+                            <p>
+                                d = 2 × R × atan2(√a, √(1 − a))
+                            </p>
+                        </div>
+
+                        <p class="formula-description">
+                            R = Earth's approximate radius (6,371 km).
+                            φ represents latitude, λ represents longitude,
+                            and Δ means the difference between two values.
+                            Angles are expressed in radians.
+                        </p>
+
+                        <p class="distance-note">
+                            Note: This is the approximate shortest distance
+                            along Earth's surface, not the driving distance.
+                        </p>
+                    </div>
+                </details>
+
+
             <?php else: ?>
 
                 <p>The distance will appear here.</p>
