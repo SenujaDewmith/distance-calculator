@@ -10,6 +10,7 @@ function calculateDistanceKm(
     float $latitudeB,
     float $longitudeB
 ): float {
+    
     // Convert latitude values to radians (degrees to radians)
     $latitudeARadians = deg2rad($latitudeA);
     $latitudeBRadians = deg2rad($latitudeB);

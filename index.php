@@ -27,27 +27,27 @@ function validateCoordinate(
     float $minimum,
     float $maximum
 ): float {
-    if ($input === '') {
+    if ($input === '') {  //check 1 
         throw new InvalidArgumentException(
             "$fieldName is required."
         );
     }
 
-   if (!is_numeric($input)) {
+   if (!is_numeric($input)) { //check 2
         throw new InvalidArgumentException(
             "$fieldName must be a valid number."
         );
     }
 
-    $coordinate = (float) $input;
+    $coordinate = (float) $input; //check 3 - type cast to float- converts the validated numeric string into a floating-point number
 
-    if (!is_finite($coordinate)) {
+    if (!is_finite($coordinate)) { //check 4
         throw new InvalidArgumentException(
             "$fieldName must be a finite number."
         );
     }
 
-    if ($coordinate < $minimum || $coordinate > $maximum) {
+    if ($coordinate < $minimum || $coordinate > $maximum) { //check 5
         throw new InvalidArgumentException(
             "$fieldName must be between $minimum and $maximum."
         );
@@ -56,16 +56,19 @@ function validateCoordinate(
     return $coordinate;
 }
 
+
 // Read submitted values
 $latitudeAInput = getPostedValue('latitude_a');
 $longitudeAInput = getPostedValue('longitude_a');
 $latitudeBInput = getPostedValue('latitude_b');
 $longitudeBInput = getPostedValue('longitude_b');
 
+
+
 // Retrieve successful result after PRG redirect
 if (
     $_SERVER['REQUEST_METHOD'] === 'GET'
-    && isset($_SESSION['calculationResult'])
+    && isset($_SESSION['calculationResult']) //checks whether the session result exists and is not null.
 ) {
     $calculationResult = $_SESSION['calculationResult'];
 
@@ -123,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         // Save calculation to MySQL
-        $pdo = getDatabaseConnection();
+        $pdo = getDatabaseConnection(); // This calls the function responsible for establishing a PDO connection to MySQL.
 
         saveDistanceCalculation(
             $pdo,
@@ -144,8 +147,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
 
         // Redirect only after successful database saving
+
         header('Location: index.php', true, 303);
-        exit;
+        exit; //This stops the PHP script immediately after issuing the redirect.
 
     } catch (InvalidArgumentException $exception) {
         $errorMessage = $exception->getMessage();
